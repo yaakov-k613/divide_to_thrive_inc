@@ -1,5 +1,6 @@
 let player = null;
 let ytApiReady = false;
+let currentVideoId = null; // track which video is loaded
 
 // Called by the YouTube IFrame API when it's ready
 window.onYouTubeIframeAPIReady = function () {
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setStatus("Please enter a valid YouTube video URL.", true);
       return;
     }
+    currentVideoId = videoId; // remember which video we’re segmenting
 
     let segmentDurationSeconds;
     try {
@@ -91,21 +93,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }, intervalMs);
   });
 
-  // Click handler: play segment inside the embedded player
+  // Click handler: play segment inside the embedded player, with end time
   segmentsBody.addEventListener("click", (e) => {
     const link = e.target.closest(".segment-link");
     if (!link) return;
 
     e.preventDefault();
     const start = Number(link.dataset.start);
+    const end = Number(link.dataset.end);
 
-    if (!ytApiReady || !player) {
+    if (!ytApiReady || !player || !currentVideoId) {
       setStatus("Player is not ready yet.", true);
       return;
     }
 
-    player.seekTo(start, true);
-    player.playVideo();
+    player.loadVideoById({
+      videoId: currentVideoId,
+      startSeconds: start,
+      endSeconds: end
+    });
   });
 
   function setStatus(message, isError = false) {
@@ -229,7 +235,8 @@ function buildSegments({
         <td>
           <a class="segment-link"
              href="${segmentUrl}"
-             data-start="${Math.floor(start)}">
+             data-start="${Math.floor(start)}"
+             data-end="${Math.floor(end)}">
              Play segment
           </a>
         </td>
