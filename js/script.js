@@ -1,13 +1,14 @@
 let player = null;
 let ytApiReady = false;
 
-function onYouTubeIframeAPIReady() {
+// Called by the YouTube IFrame API when it's ready
+window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
   player = new YT.Player("player", {
-    height: "0",
-    width: "0"
+    width: "100%",
+    height: "360"
   });
-}
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("video-form");
@@ -236,8 +237,3 @@ function buildSegmentUrl(base, startSeconds, format) {
 
   return url.toString();
 }
-
-// Page Player
-
-player = new YT.Player("player", { width: "100%", height: "360" });
-
