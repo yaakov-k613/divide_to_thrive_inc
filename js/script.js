@@ -91,6 +91,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }, intervalMs);
   });
 
+  // Click handler: play segment inside the embedded player
+  segmentsBody.addEventListener("click", (e) => {
+    const link = e.target.closest(".segment-link");
+    if (!link) return;
+
+    e.preventDefault();
+    const start = Number(link.dataset.start);
+
+    if (!ytApiReady || !player) {
+      setStatus("Player is not ready yet.", true);
+      return;
+    }
+
+    player.seekTo(start, true);
+    player.playVideo();
+  });
+
   function setStatus(message, isError = false) {
     statusEl.textContent = message;
     statusEl.classList.toggle("status-message--error", !!isError);
@@ -209,7 +226,13 @@ function buildSegments({
         <td>${index}</td>
         <td>${startLabel}</td>
         <td>${endLabel}</td>
-        <td><a class="segment-link" href="${segmentUrl}" target="_blank" rel="noopener noreferrer">Open segment</a></td>
+        <td>
+          <a class="segment-link"
+             href="${segmentUrl}"
+             data-start="${Math.floor(start)}">
+             Play segment
+          </a>
+        </td>
       </tr>`
     );
 
