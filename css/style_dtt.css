@@ -259,3 +259,9 @@ button:active {
   left: -9999px;
   top: -9999px;
 }
+
+/* Page Player */
+#player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
