@@ -6,7 +6,6 @@
   <title>Divide to Thrive – Video Slicer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="./css/style_dtt.css">
-  <script src="./js/script.js" defer></script>
 </head>
 <body>
   <div class="app">
@@ -19,87 +18,27 @@
       <section class="card">
         <h2>Video Settings</h2>
         <form id="video-form">
-          <label for="video-url">
-            YouTube Video URL
-            <input
-              type="url"
-              id="video-url"
-              placeholder="https://youtu.be/VIDEO_ID or https://www.youtube.com/watch?v=VIDEO_ID"
-              required
-            />
-          </label>
-
-          <label for="segment-duration">
-            Segment Duration (HH:MM:SS)
-            <input
-              type="text"
-              id="segment-duration"
-              placeholder="00:01:00"
-              required
-            />
-          </label>
-
-          <fieldset class="field-group">
-            <legend>Timestamp Format for Links</legend>
-            <label class="radio-label">
-              <input
-                type="radio"
-                name="time-format"
-                value="seconds"
-                checked
-              />
-              Seconds (e.g. t=175)
-            </label>
-            <label class="radio-label">
-              <input
-                type="radio"
-                name="time-format"
-                value="hms"
-              />
-              H/M/S (e.g. t=0h2m55s)
-            </label>
-          </fieldset>
-
-          <button type="submit" id="generate-btn">
-            Generate Segments
-          </button>
-
-          <p id="status-message" class="status-message" aria-live="polite"></p>
+          <!-- (your existing form inputs unchanged) -->
+          <!-- ... -->
         </form>
+      </section>
+
+      <!-- NEW: visible video player card -->
+      <section class="card">
+        <h2>Video Preview</h2>
+        <div id="player"></div>
       </section>
 
       <section class="card">
         <h2>Segments</h2>
-        <div class="segments-table-container">
-          <table class="segments-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Link</th>
-              </tr>
-            </thead>
-            <tbody id="segments-body">
-              <tr>
-                <td colspan="4" class="segments-empty">
-                  No segments yet. Enter a video URL and duration, then click
-                  “Generate Segments”.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <!-- (your existing segments table unchanged) -->
       </section>
     </main>
   </div>
 
-  <!-- Hidden / tiny player used only to get duration -->
-  <div id="player" class="player-hidden" aria-hidden="true"></div>
-
   <!-- YouTube IFrame API -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <!-- Core App Logic -->
-  <script src="script.js"></script>
+  <script src="./js/script.js"></script>
 </body>
 </html>
