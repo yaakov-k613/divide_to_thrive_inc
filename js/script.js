@@ -236,3 +236,8 @@ function buildSegmentUrl(base, startSeconds, format) {
 
   return url.toString();
 }
+
+// Page Player
+
+player = new YT.Player("player", { width: "100%", height: "360" });
+
