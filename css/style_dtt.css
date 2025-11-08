@@ -140,11 +140,11 @@ input[type="text"]:focus {
   border: 1px solid var(--border);
 }
 
-.field-group legend {
+/* .field-group legend {
   font-size: 0.85rem;
   color: var(--text-soft);
   padding: 0 4px;
-}
+} */
 
 .radio-label {
   display: flex;

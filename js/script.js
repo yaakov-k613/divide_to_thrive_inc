@@ -23,9 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const urlInput = document.getElementById("video-url");
     const durationInput = document.getElementById("segment-duration");
-    const format = document.querySelector(
-      "input[name='time-format']:checked"
-    ).value;
 
     const videoUrl = urlInput.value.trim();
     const segmentStr = durationInput.value.trim();
@@ -74,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
           totalDuration: duration,
           baseUrl: videoUrl,
           segmentDurationSeconds,
-          format,
           tbody: segmentsBody
         });
         setStatus(
@@ -202,18 +198,10 @@ function formatSeconds(secondsTotal) {
   return `${hh}:${mm}:${ss}`;
 }
 
-function toHmsParam(secondsTotal) {
-  const s = Math.floor(secondsTotal % 60);
-  const m = Math.floor((secondsTotal / 60) % 60);
-  const h = Math.floor(secondsTotal / 3600);
-  return `${h}h${m}m${s}s`;
-}
-
 function buildSegments({
   totalDuration,
   baseUrl,
   segmentDurationSeconds,
-  format,
   tbody
 }) {
   const rows = [];
@@ -225,7 +213,7 @@ function buildSegments({
     const startLabel = formatSeconds(start);
     const endLabel = formatSeconds(end);
 
-    const segmentUrl = buildSegmentUrl(baseUrl, start, format);
+    const segmentUrl = buildSegmentUrl(baseUrl, start);
 
     rows.push(
       `<tr>
@@ -249,7 +237,7 @@ function buildSegments({
   tbody.innerHTML = rows.join("");
 }
 
-function buildSegmentUrl(base, startSeconds, format) {
+function buildSegmentUrl(base, startSeconds) {
   let url;
   try {
     url = new URL(base);
@@ -258,12 +246,7 @@ function buildSegmentUrl(base, startSeconds, format) {
   }
 
   url.searchParams.delete("t");
-
-  if (format === "hms") {
-    url.searchParams.set("t", toHmsParam(startSeconds));
-  } else {
-    url.searchParams.set("t", String(Math.floor(startSeconds)));
-  }
+  url.searchParams.set("t", String(Math.floor(startSeconds)));
 
   return url.toString();
 }
