@@ -90,15 +90,18 @@ body {
   font-size: 1.1rem;
 }
 
+/* URL actions (Add / Remove) */
+
 .url-actions {
   display: flex;
   gap: 8px;
   margin-top: 6px;
 }
-.url-actions button {
-  padding-inline: 12px;
-}
 
+.url-actions button {
+  flex: 1;           /* make Add + Remove equal width */
+  margin-top: 0;     /* avoid extra top gap inside the row */
+}
 
 /* Form */
 
@@ -125,7 +128,8 @@ input[type="text"] {
   color: var(--text);
   font-size: 0.93rem;
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
     background-color var(--transition-fast);
 }
 
@@ -141,30 +145,7 @@ input[type="text"]:focus {
   background-color: rgba(16, 22, 44, 0.98);
 }
 
-/* Fieldset */
-
-.field-group {
-  margin: 4px 0 0;
-  padding: 8px 10px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-}
-
-/* .field-group legend {
-  font-size: 0.85rem;
-  color: var(--text-soft);
-  padding: 0 4px;
-} */
-
-.radio-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.88rem;
-  margin-top: 4px;
-}
-
-/* Button */
+/* Buttons */
 
 button {
   margin-top: 6px;
@@ -178,7 +159,8 @@ button {
   font-size: 0.98rem;
   letter-spacing: 0.01em;
   box-shadow: 0 10px 25px rgba(63, 169, 245, 0.45);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+  transition: transform var(--transition-fast),
+    box-shadow var(--transition-fast),
     filter var(--transition-fast);
 }
 
@@ -213,7 +195,12 @@ button:active {
   overflow: auto;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: radial-gradient(circle at top left, #151c33 0, #060812 40%, #05060e 100%);
+  background: radial-gradient(
+    circle at top left,
+    #151c33 0,
+    #060812 40%,
+    #05060e 100%
+  );
 }
 
 .segments-table {
@@ -259,22 +246,7 @@ button:active {
   text-decoration: underline;
 }
 
-/* Hidden player */
-
-.player-hidden {
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-}
-
-/* Page Player */
-#player {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-}
+/* Player + overlay */
 
 .player-wrapper {
   position: relative;
