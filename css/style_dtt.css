@@ -175,6 +175,19 @@ button:active {
   box-shadow: 0 8px 18px rgba(63, 169, 245, 0.4);
 }
 
+#generate-btn {
+  background: linear-gradient(135deg, #3fa9f5, #6ed0ff);
+}
+
+#save-url-btn {
+  background: linear-gradient(135deg, #4caf50, #81c784);
+}
+
+#clear-url-btn {
+  background: linear-gradient(135deg, #f44336, #e57373);
+}
+
+
 /* Status message */
 
 .status-message {

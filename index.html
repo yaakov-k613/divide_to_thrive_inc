@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./css/style_dtt.css">
 </head>
 <body>
+
   <div class="app">
     <header class="app__header">
       <h1>Divide to Thrive – YouTube Video Slicer</h1>
@@ -29,10 +30,7 @@
             />
           </label>
 
-          <div class="url-actions">
-            <button type="button" id="save-url-btn">Add</button>
-            <button type="button" id="clear-url-btn">Remove</button>
-          </div>
+         
 
           <label for="segment-duration">
             Segment Duration (HH:MM:SS)
@@ -47,6 +45,11 @@
           <button type="submit" id="generate-btn">Generate Segments</button>
           <p id="status-message" class="status-message" aria-live="polite"></p>
         </form>
+
+         <div class="url-actions">
+            <button type="button" id="save-url-btn">Add</button>
+            <button type="button" id="clear-url-btn">Remove</button>
+          </div>
       </section>
 
       <!-- Video Player Section with Overlay -->
