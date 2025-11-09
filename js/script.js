@@ -5,10 +5,11 @@ let currentVideoId = null;
 const STORAGE_KEYS = {
   url: "dtt_video_url",
   duration: "dtt_segment_duration",
-  segments: "dtt_segments_html"
+  segments: "dtt_segments_html",
+  completed: "dtt_segments_completed"
 };
 
-// Called by the YouTube IFrame API when it's ready
+// YouTube IFrame API callback
 window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
   player = new YT.Player("player", {
@@ -31,7 +32,7 @@ function onPlayerStateChange(event) {
   }
 }
 
-// Global status helpers (used in several places)
+// Status helpers
 function setStatus(message, isError = false) {
   const statusEl = document.getElementById("status-message");
   if (!statusEl) return;
@@ -67,11 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (savedSegments) {
     segmentsBody.innerHTML = savedSegments;
+    restoreCompletionState(segmentsBody);
   } else {
     clearSegments(segmentsBody);
   }
 
-  // Save URL + duration + current segments
+  // Save URL + duration + segments + completion state
   saveUrlBtn.addEventListener("click", () => {
     const url = urlInput.value.trim();
     const dur = durationInput.value.trim();
@@ -84,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem(STORAGE_KEYS.url, url);
     localStorage.setItem(STORAGE_KEYS.duration, dur);
     localStorage.setItem(STORAGE_KEYS.segments, segmentsBody.innerHTML);
+    saveCompletionState(segmentsBody);
     setStatus("Video URL, duration, and segments saved for next time.");
   });
 
@@ -92,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem(STORAGE_KEYS.url);
     localStorage.removeItem(STORAGE_KEYS.duration);
     localStorage.removeItem(STORAGE_KEYS.segments);
+    localStorage.removeItem(STORAGE_KEYS.completed);
     urlInput.value = "";
     durationInput.value = "";
     currentVideoId = null;
@@ -155,10 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
           tbody: segmentsBody
         });
 
-        // Persist inputs + segments automatically on generation
+        // Persist latest state (all unchecked initially)
         localStorage.setItem(STORAGE_KEYS.url, videoUrl);
         localStorage.setItem(STORAGE_KEYS.duration, segmentStr);
         localStorage.setItem(STORAGE_KEYS.segments, segmentsBody.innerHTML);
+        saveCompletionState(segmentsBody);
 
         setStatus(
           `Generated segments for video (${formatSeconds(duration)} total).`
@@ -176,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, intervalMs);
   });
 
-  // Click handler: play segment inside the embedded player, with end time
+  // Play segment in player
   segmentsBody.addEventListener("click", (e) => {
     const link = e.target.closest(".segment-link");
     if (!link) return;
@@ -198,11 +203,20 @@ document.addEventListener("DOMContentLoaded", () => {
       endSeconds: end
     });
   });
+
+  // Persist checkbox changes
+  segmentsBody.addEventListener("change", (e) => {
+    if (!e.target.classList.contains("segment-check")) return;
+    saveCompletionState(segmentsBody);
+    localStorage.setItem(STORAGE_KEYS.segments, segmentsBody.innerHTML);
+  });
 });
+
+// Helpers
 
 function clearSegments(tbody) {
   tbody.innerHTML =
-    '<tr><td colspan="4" class="segments-empty">No segments yet. Enter a video URL and duration, then click “Generate Segments”.</td></tr>';
+    '<tr><td colspan="5" class="segments-empty">No segments yet. Enter a video URL and duration, then click “Generate Segments”.</td></tr>';
 }
 
 function extractVideoId(url) {
@@ -297,6 +311,7 @@ function buildSegments({
 
     rows.push(
       `<tr>
+        <td><input type="checkbox" class="segment-check" data-index="${index}" /></td>
         <td>${index}</td>
         <td>${startLabel}</td>
         <td>${endLabel}</td>
@@ -315,6 +330,39 @@ function buildSegments({
   }
 
   tbody.innerHTML = rows.join("");
+}
+
+// Save which checkboxes are checked
+function saveCompletionState(tbody) {
+  const checks = tbody.querySelectorAll(".segment-check");
+  const completed = [];
+  checks.forEach((cb) => {
+    if (cb.checked) {
+      completed.push(Number(cb.dataset.index));
+    }
+  });
+  localStorage.setItem(STORAGE_KEYS.completed, JSON.stringify(completed));
+}
+
+// Reapply checked state based on saved data
+function restoreCompletionState(tbody) {
+  const raw = localStorage.getItem(STORAGE_KEYS.completed);
+  if (!raw) return;
+  let completed;
+  try {
+    completed = JSON.parse(raw);
+  } catch {
+    return;
+  }
+  if (!Array.isArray(completed)) return;
+
+  const checks = tbody.querySelectorAll(".segment-check");
+  checks.forEach((cb) => {
+    const idx = Number(cb.dataset.index);
+    if (completed.includes(idx)) {
+      cb.checked = true;
+    }
+  });
 }
 
 function buildSegmentUrl(base, startSeconds) {

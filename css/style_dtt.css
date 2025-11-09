@@ -230,11 +230,34 @@ button:active {
   );
 }
 
-.segments-table {
+/* .segments-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.87rem;
+} */
+
+/* .segment-check {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
+
+.segment-check:checked ~ td {
+  opacity: 0.6;
+} */
+
+.segment-check {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+} 
+
+.segment-check:checked ~ td {
+  opacity: 0.6;
+}
+
 
 .segments-table thead {
   position: sticky;
