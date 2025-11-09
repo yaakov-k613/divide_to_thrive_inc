@@ -19,7 +19,25 @@
       <section class="card">
         <h2>Video Settings</h2>
         <form id="video-form">
+
           <label for="video-url">
+  YouTube Video URL
+  <input
+    type="url"
+    id="video-url"
+    placeholder="https://youtu.be/VIDEO_ID or https://www.youtube.com/watch?v=VIDEO_ID"
+    required
+  />
+</label>
+
+<div class="url-actions">
+  <button type="button" id="save-url-btn">Add</button>
+  <button type="button" id="clear-url-btn">Remove</button>
+</div>
+
+
+
+          <!-- <label for="video-url">
             YouTube Video URL
             <input
               type="url"
@@ -27,7 +45,7 @@
               placeholder="https://youtu.be/VIDEO_ID or https://www.youtube.com/watch?v=VIDEO_ID"
               required
             />
-          </label>
+          </label> -->
 
           <label for="segment-duration">
             Segment Duration (HH:MM:SS)

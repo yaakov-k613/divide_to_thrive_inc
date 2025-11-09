@@ -1,34 +1,24 @@
 let player = null;
 let ytApiReady = false;
-let currentVideoId = null; // track which video is loaded
+let currentVideoId = null;
+
+const STORAGE_KEYS = {
+  url: "dtt_video_url",
+  duration: "dtt_segment_duration",
+  segments: "dtt_segments_html"
+};
 
 // Called by the YouTube IFrame API when it's ready
-// window.onYouTubeIframeAPIReady = function () {
-//   ytApiReady = true;
-//   player = new YT.Player("player", {
-//     width: "100%",
-//     height: "360"
-//   });
-// };
-
-// window.onYouTubeIframeAPIReady = function () {
-//   ytApiReady = true;
-//   player = new YT.Player("player", {
-//     width: "100%",
-//     height: "360",
-//     playerVars: {
-//       rel: 0,            // show related videos only from same channel
-//       modestbranding: 1, // less YouTube branding
-//       iv_load_policy: 3  // hide video annotations
-//     }
-//   });
-// };
-
 window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
   player = new YT.Player("player", {
     width: "100%",
     height: "360",
+    playerVars: {
+      rel: 0,
+      modestbranding: 1,
+      iv_load_policy: 3
+    },
     events: { onStateChange: onPlayerStateChange }
   });
 };
@@ -41,22 +31,80 @@ function onPlayerStateChange(event) {
   }
 }
 
-const overlay = document.getElementById("player-overlay");
-if (overlay) overlay.style.display = "none";
+// Global status helpers (used in several places)
+function setStatus(message, isError = false) {
+  const statusEl = document.getElementById("status-message");
+  if (!statusEl) return;
+  statusEl.textContent = message;
+  statusEl.classList.toggle("status-message--error", !!isError);
+}
 
+function clearStatus() {
+  setStatus("");
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("video-form");
-  const statusEl = document.getElementById("status-message");
   const segmentsBody = document.getElementById("segments-body");
+  const urlInput = document.getElementById("video-url");
+  const durationInput = document.getElementById("segment-duration");
+  const saveUrlBtn = document.getElementById("save-url-btn");
+  const clearUrlBtn = document.getElementById("clear-url-btn");
+  const overlay = document.getElementById("player-overlay");
+
+  // Restore saved inputs and segments
+  const savedUrl = localStorage.getItem(STORAGE_KEYS.url);
+  const savedDuration = localStorage.getItem(STORAGE_KEYS.duration);
+  const savedSegments = localStorage.getItem(STORAGE_KEYS.segments);
+
+  if (savedUrl) {
+    urlInput.value = savedUrl;
+    currentVideoId = extractVideoId(savedUrl) || null;
+  }
+  if (savedDuration) {
+    durationInput.value = savedDuration;
+  }
+
+  if (savedSegments) {
+    segmentsBody.innerHTML = savedSegments;
+  } else {
+    clearSegments(segmentsBody);
+  }
+
+  // Save URL + duration + current segments
+  saveUrlBtn.addEventListener("click", () => {
+    const url = urlInput.value.trim();
+    const dur = durationInput.value.trim();
+
+    if (!url || !dur) {
+      setStatus("Enter a video URL and segment duration before adding.", true);
+      return;
+    }
+
+    localStorage.setItem(STORAGE_KEYS.url, url);
+    localStorage.setItem(STORAGE_KEYS.duration, dur);
+    localStorage.setItem(STORAGE_KEYS.segments, segmentsBody.innerHTML);
+    setStatus("Video URL, duration, and segments saved for next time.");
+  });
+
+  // Clear everything
+  clearUrlBtn.addEventListener("click", () => {
+    localStorage.removeItem(STORAGE_KEYS.url);
+    localStorage.removeItem(STORAGE_KEYS.duration);
+    localStorage.removeItem(STORAGE_KEYS.segments);
+    urlInput.value = "";
+    durationInput.value = "";
+    currentVideoId = null;
+    clearSegments(segmentsBody);
+    if (overlay) overlay.style.display = "none";
+    setStatus("Saved video and segments cleared.");
+  });
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     clearStatus();
     clearSegments(segmentsBody);
-
-    const urlInput = document.getElementById("video-url");
-    const durationInput = document.getElementById("segment-duration");
+    if (overlay) overlay.style.display = "none";
 
     const videoUrl = urlInput.value.trim();
     const segmentStr = durationInput.value.trim();
@@ -74,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setStatus("Please enter a valid YouTube video URL.", true);
       return;
     }
-    currentVideoId = videoId; // remember which video we’re segmenting
+    currentVideoId = videoId;
 
     let segmentDurationSeconds;
     try {
@@ -90,7 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     setStatus("Loading video and calculating duration…");
-
     player.cueVideoById(videoId);
 
     const maxWaitMs = 10000;
@@ -107,6 +154,12 @@ document.addEventListener("DOMContentLoaded", () => {
           segmentDurationSeconds,
           tbody: segmentsBody
         });
+
+        // Persist inputs + segments automatically on generation
+        localStorage.setItem(STORAGE_KEYS.url, videoUrl);
+        localStorage.setItem(STORAGE_KEYS.duration, segmentStr);
+        localStorage.setItem(STORAGE_KEYS.segments, segmentsBody.innerHTML);
+
         setStatus(
           `Generated segments for video (${formatSeconds(duration)} total).`
         );
@@ -137,21 +190,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (overlay) overlay.style.display = "none";
+
     player.loadVideoById({
       videoId: currentVideoId,
       startSeconds: start,
       endSeconds: end
     });
   });
-
-  function setStatus(message, isError = false) {
-    statusEl.textContent = message;
-    statusEl.classList.toggle("status-message--error", !!isError);
-  }
-
-  function clearStatus() {
-    setStatus("");
-  }
 });
 
 function clearSegments(tbody) {

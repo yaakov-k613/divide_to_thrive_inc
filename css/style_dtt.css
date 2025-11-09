@@ -90,6 +90,16 @@ body {
   font-size: 1.1rem;
 }
 
+.url-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.url-actions button {
+  padding-inline: 12px;
+}
+
+
 /* Form */
 
 #video-form {
