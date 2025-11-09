@@ -15,6 +15,7 @@
     </header>
 
     <main class="app__main">
+      <!-- Video Input Section -->
       <section class="card">
         <h2>Video Settings</h2>
         <form id="video-form">
@@ -38,28 +39,24 @@
             />
           </label>
 
-          <!-- <fieldset class="field-group">
-            <legend>Timestamp Format for Links</legend>
-            <label class="radio-label">
-              <input type="radio" name="time-format" value="seconds" checked />
-              Seconds (e.g. t=175)
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="time-format" value="hms" />
-              H/M/S (e.g. t=0h2m55s)
-            </label>
-          </fieldset> -->
-
           <button type="submit" id="generate-btn">Generate Segments</button>
           <p id="status-message" class="status-message" aria-live="polite"></p>
         </form>
       </section>
 
+      <!-- Video Player Section with Overlay -->
       <section class="card">
         <h2>Video Preview</h2>
-        <div id="player"></div>
+        <div class="player-wrapper">
+          <div id="player"></div>
+          <div id="player-overlay">
+            <p>Mini-class complete.</p>
+            <p>&nbsp;Click a segment below to continue.</p>
+          </div>
+        </div>
       </section>
 
+      <!-- Segments Table -->
       <section class="card">
         <h2>Segments</h2>
         <div class="segments-table-container">
@@ -85,7 +82,9 @@
     </main>
   </div>
 
+  <!-- Scripts -->
   <script src="./js/script.js"></script>
   <script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>
+

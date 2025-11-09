@@ -11,18 +11,38 @@ let currentVideoId = null; // track which video is loaded
 //   });
 // };
 
+// window.onYouTubeIframeAPIReady = function () {
+//   ytApiReady = true;
+//   player = new YT.Player("player", {
+//     width: "100%",
+//     height: "360",
+//     playerVars: {
+//       rel: 0,            // show related videos only from same channel
+//       modestbranding: 1, // less YouTube branding
+//       iv_load_policy: 3  // hide video annotations
+//     }
+//   });
+// };
+
 window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
   player = new YT.Player("player", {
     width: "100%",
     height: "360",
-    playerVars: {
-      rel: 0,            // show related videos only from same channel
-      modestbranding: 1, // less YouTube branding
-      iv_load_policy: 3  // hide video annotations
-    }
+    events: { onStateChange: onPlayerStateChange }
   });
 };
+
+function onPlayerStateChange(event) {
+  const overlay = document.getElementById("player-overlay");
+  if (!overlay) return;
+  if (event.data === YT.PlayerState.ENDED) {
+    overlay.style.display = "flex";
+  }
+}
+
+const overlay = document.getElementById("player-overlay");
+if (overlay) overlay.style.display = "none";
 
 
 document.addEventListener("DOMContentLoaded", () => {
