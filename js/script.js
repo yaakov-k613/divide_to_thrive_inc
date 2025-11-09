@@ -3,13 +3,27 @@ let ytApiReady = false;
 let currentVideoId = null; // track which video is loaded
 
 // Called by the YouTube IFrame API when it's ready
+// window.onYouTubeIframeAPIReady = function () {
+//   ytApiReady = true;
+//   player = new YT.Player("player", {
+//     width: "100%",
+//     height: "360"
+//   });
+// };
+
 window.onYouTubeIframeAPIReady = function () {
   ytApiReady = true;
   player = new YT.Player("player", {
     width: "100%",
-    height: "360"
+    height: "360",
+    playerVars: {
+      rel: 0,            // show related videos only from same channel
+      modestbranding: 1, // less YouTube branding
+      iv_load_policy: 3  // hide video annotations
+    }
   });
 };
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("video-form");
