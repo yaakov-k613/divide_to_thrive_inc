@@ -174,7 +174,7 @@ button:active {
   transform: translateY(0);
   box-shadow: 0 8px 18px rgba(63, 169, 245, 0.4);
 }
-
+/* 
 #generate-btn {
   background: linear-gradient(135deg, #3fa9f5, #6ed0ff);
 }
@@ -185,7 +185,21 @@ button:active {
 
 #clear-url-btn {
   background: linear-gradient(135deg, #f44336, #e57373);
+} */
+
+#save-url-btn,
+#clear-url-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  box-shadow: none;
 }
+#save-url-btn:hover,
+#clear-url-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 
 
 /* Status message */
