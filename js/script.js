@@ -320,7 +320,7 @@ function buildSegments({
              href="${segmentUrl}"
              data-start="${Math.floor(start)}"
              data-end="${Math.floor(end)}">
-             Play segment
+             Play
           </a>
         </td>
       </tr>`
